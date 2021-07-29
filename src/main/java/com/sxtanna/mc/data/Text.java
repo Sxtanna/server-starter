@@ -18,8 +18,17 @@ public interface Text
 
 
     @NotNull
-    List<String> ARGS = List.of(
-            // gc configuration
+    List<String> ARGS_PROXIES = List.of(
+            "-XX:+UseG1GC",
+            "-XX:G1HeapRegionSize=4M",
+            "-XX:+UnlockExperimentalVMOptions",
+            "-XX:+ParallelRefProcEnabled",
+            "-XX:+AlwaysPreTouch",
+
+            "-Dfile.encoding=UTF-8");
+
+    @NotNull
+    List<String> ARGS_SERVERS = List.of(
             "-XX:+UseG1GC",
             "-XX:+ParallelRefProcEnabled",
             "-XX:MaxGCPauseMillis=200",
@@ -42,7 +51,6 @@ public interface Text
             "-XX:G1ReservePercent=20",
             "-XX:InitiatingHeapOccupancyPercent=15",
 
-            // specifics
             "-Dfile.encoding=UTF-8",
 
             "-Daikars.new.flags=true",

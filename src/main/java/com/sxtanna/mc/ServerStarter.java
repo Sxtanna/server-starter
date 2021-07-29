@@ -116,7 +116,14 @@ final class ServerStarter
         args.add(Text.MIN_MEMORY.replace("{s}", String.valueOf(this.size.getMinMemory())));
         args.add(Text.MAX_MEMORY.replace("{s}", String.valueOf(this.size.getMaxMemory())));
 
-        args.addAll(Text.ARGS);
+        if (this.type == Type.BUNGEE)
+        {
+            args.addAll(Text.ARGS_PROXIES);
+        }
+        else
+        {
+            args.addAll(Text.ARGS_SERVERS);
+        }
 
         args.add("-jar");
         args.add(Text.JAR_NAME.replace("{t}", this.type.getName().toLowerCase(Locale.ROOT)));
