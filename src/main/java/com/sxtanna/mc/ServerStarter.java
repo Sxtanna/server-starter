@@ -67,9 +67,15 @@ final class ServerStarter
         else
         {
             final var attr = Files.readAttributes(path, BasicFileAttributes.class);
-            System.out.printf("Server Jar was last downloaded [%s]%n", formatter.format(attr.creationTime().toInstant()));
 
-            if (attr.creationTime().toInstant().isAfter(Instant.now().minus(7, ChronoUnit.DAYS)))
+            final var create = attr.creationTime().toInstant();
+            final var modify = attr.lastModifiedTime().toInstant();
+
+            final var latest = modify.isAfter(create) ? modify : create;
+
+            System.out.printf("Server Jar was last downloaded [%s]%n", formatter.format(latest));
+
+            if (latest.isAfter(Instant.now().minus(7, ChronoUnit.DAYS)))
             {
                 System.out.println("Skipping download...");
                 return;
