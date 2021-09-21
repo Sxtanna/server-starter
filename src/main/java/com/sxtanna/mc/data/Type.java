@@ -73,7 +73,7 @@ public class Type
         }
     };
 
-    public static final Type PURPUR = new Type("purpur", "stop", "https://purpur.pl3x.net/api/v1/purpur", "https://purpur.pl3x.net/api/v1/purpur/%s/%s/download")
+    public static final Type PURPUR = new Type("purpur", "stop", "https://api.pl3x.net/v2/purpur", "https://api.pl3x.net/v2/purpur/%s/%s/download")
     {
         @Override
         public Optional<String> getLatestVersion(@NotNull final Vers vers)
