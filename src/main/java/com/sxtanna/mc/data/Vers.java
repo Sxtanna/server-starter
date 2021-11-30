@@ -70,10 +70,77 @@ public final class Vers implements Comparable<Vers>
         return version.substring(0, version.lastIndexOf('.'));
     }
 
+
+    @Contract(pure = true)
+    public @NotNull String majorVersion()
+    {
+        return "1"; // optimization, for now
+    }
+
+    @Contract(pure = true)
+    public @NotNull String minorVersion()
+    {
+        final var version = mcVersion();
+
+        final var mU = version.indexOf('.') + 1;
+        final var pU = version.indexOf('.', mU);
+
+        return pU == -1 ? version.substring(mU) : version.substring(mU, pU);
+    }
+
+    @Contract(pure = true)
+    public @NotNull String patchVersion()
+    {
+        final var version = mcVersion();
+
+        final var mU = version.indexOf('.') + 1;
+        final var pU = version.indexOf('.', mU);
+
+        return pU == -1 ? "" : version.substring(pU + 1);
+    }
+
+
+    @Contract(pure = true)
+    public @NotNull Integer majorVersionNumber()
+    {
+        final var major = majorVersion();
+
+        return major.isBlank() ? 0 : Integer.parseInt(major);
+    }
+
+    @Contract(pure = true)
+    public @NotNull Integer minorVersionNumber()
+    {
+        final var minor = minorVersion();
+
+        return minor.isBlank() ? 0 : Integer.parseInt(minor);
+    }
+
+    @Contract(pure = true)
+    public @NotNull Integer patchVersionNumber()
+    {
+        final var patch = patchVersion();
+
+        return patch.isBlank() ? 0 : Integer.parseInt(patch);
+    }
+
+
     @Override
     public int compareTo(@NotNull final Vers that)
     {
-        return this.ordinal() - that.ordinal();
+        final var major = this.majorVersionNumber().compareTo(that.majorVersionNumber());
+        if (major != 0)
+        {
+            return major;
+        }
+
+        final var minor = this.minorVersionNumber().compareTo(that.minorVersionNumber());
+        if (minor != 0)
+        {
+            return minor;
+        }
+
+        return this.patchVersionNumber().compareTo(that.patchVersionNumber());
     }
 
     @Override
