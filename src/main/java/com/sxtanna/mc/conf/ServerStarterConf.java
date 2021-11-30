@@ -28,34 +28,39 @@ public final class ServerStarterConf
 
 
     @Nullable
-    private final Path path;
+    private final Path   path;
     @Nullable
-    private final Size size;
+    private final Size   size;
     @Nullable
-    private final Type type;
+    private final Type   type;
     @Nullable
-    private final Vers vers;
+    private final Vers   vers;
+    @NotNull
+    private final Config conf;
 
 
     @Contract(pure = true)
     public ServerStarterConf(@Nullable final Path path,
                              @Nullable final Size size,
                              @Nullable final Type type,
-                             @Nullable final Vers vers)
+                             @Nullable final Vers vers,
+                             @NotNull final Config conf)
     {
         this.path = path;
         this.size = size;
         this.type = type;
         this.vers = vers;
+        this.conf = conf;
     }
 
     @Contract(pure = true)
-    private ServerStarterConf(@NotNull final Builder builder)
+    private ServerStarterConf(@NotNull final Builder builder, @NotNull final Config conf)
     {
         this(builder.path,
              builder.size,
              builder.type,
-             builder.vers);
+             builder.vers,
+             conf);
     }
 
 
@@ -84,28 +89,34 @@ public final class ServerStarterConf
     }
 
 
+    public @NotNull Config conf()
+    {
+        return this.conf;
+    }
+
+
     @Contract(value = "_ -> new", pure = true)
     public @NotNull ServerStarterConf with(@Nullable final Path path)
     {
-        return new ServerStarterConf(path, this.size, this.type, this.vers);
+        return new ServerStarterConf(path, this.size, this.type, this.vers, this.conf);
     }
 
     @Contract(value = "_ -> new", pure = true)
     public @NotNull ServerStarterConf with(@Nullable final Size size)
     {
-        return new ServerStarterConf(this.path, size, this.type, this.vers);
+        return new ServerStarterConf(this.path, size, this.type, this.vers, this.conf);
     }
 
     @Contract(value = "_ -> new", pure = true)
     public @NotNull ServerStarterConf with(@Nullable final Type type)
     {
-        return new ServerStarterConf(this.path, this.size, type, this.vers);
+        return new ServerStarterConf(this.path, this.size, type, this.vers, this.conf);
     }
 
     @Contract(value = "_ -> new", pure = true)
     public @NotNull ServerStarterConf with(@Nullable final Vers vers)
     {
-        return new ServerStarterConf(this.path, this.size, this.type, vers);
+        return new ServerStarterConf(this.path, this.size, this.type, vers, this.conf);
     }
 
 
@@ -163,10 +174,10 @@ public final class ServerStarterConf
         }
 
 
-        @Contract(value = " -> new", pure = true)
-        public @NotNull ServerStarterConf build()
+        @Contract(value = "_ -> new", pure = true)
+        public @NotNull ServerStarterConf build(@NotNull final Config conf)
         {
-            return new ServerStarterConf(this);
+            return new ServerStarterConf(this, conf);
         }
 
     }
@@ -230,6 +241,8 @@ public final class ServerStarterConf
             conf.vers()
                 .ifPresent(vers -> config.with("vers", vers.mcVersion()));
 
+            config.config.withFallback(conf.conf);
+
             return config.config;
         }
 
@@ -257,7 +270,7 @@ public final class ServerStarterConf
                 builder.vers(Vers.resolveVers(conf.getString("vers")));
             }
 
-            return builder.build();
+            return builder.build(conf);
         }
 
     }

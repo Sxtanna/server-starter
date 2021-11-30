@@ -31,7 +31,7 @@ public final class ServerStarterMain
         final var conf = root.resolve("server-starter.conf").toAbsolutePath();
 
 
-        ServerStarterConf config = ServerStarterConf.builder().build();
+        ServerStarterConf config = ServerStarterConf.builder().build(ConfigFactory.empty());
 
         if (Files.notExists(conf))
         {
@@ -39,7 +39,7 @@ public final class ServerStarterMain
             {
                 saveConfig(conf, ServerStarterConf.builder()
                                                   .defaults()
-                                                  .build());
+                                                  .build(ConfigFactory.empty()));
             }
             catch (final IOException ex)
             {
@@ -159,7 +159,7 @@ public final class ServerStarterMain
 
         try
         {
-            exec(type, path, size, vers);
+            exec(type, path, size, vers, config);
         }
         catch (IOException | InterruptedException e)
         {
@@ -168,9 +168,9 @@ public final class ServerStarterMain
         }
     }
 
-    private static void exec(@NotNull final Type type, @NotNull final Path path, @NotNull final Size size, @NotNull final Vers vers) throws IOException, InterruptedException
+    private static void exec(@NotNull final Type type, @NotNull final Path path, @NotNull final Size size, @NotNull final Vers vers, @NotNull final ServerStarterConf config) throws IOException, InterruptedException
     {
-        final var starter = new ServerStarter(type, path, size, vers);
+        final var starter = new ServerStarter(type, path, size, vers, config);
         starter.saveServerJar();
         starter.execServerJar();
     }
