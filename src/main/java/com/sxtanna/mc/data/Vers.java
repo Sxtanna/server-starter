@@ -10,8 +10,6 @@ import java.util.Objects;
 public final class Vers implements Comparable<Vers>
 {
 
-    private static int index = 0;
-
     public static final Vers V1_8_8  = new Vers("V1_8_8");
     public static final Vers V1_9_4  = new Vers("V1_9_4");
     public static final Vers V1_10_2 = new Vers("V1_10_2");
@@ -30,13 +28,11 @@ public final class Vers implements Comparable<Vers>
 
     @NotNull
     private final String name;
-    private final int    ordinal;
 
     @Contract(pure = true)
     public Vers(@NotNull final String name)
     {
-        this.name    = name;
-        this.ordinal = index++;
+        this.name = name;
     }
 
 
@@ -44,12 +40,6 @@ public final class Vers implements Comparable<Vers>
     public @NotNull String name()
     {
         return this.name;
-    }
-
-    @Contract(pure = true)
-    public int ordinal()
-    {
-        return this.ordinal;
     }
 
 
@@ -162,13 +152,13 @@ public final class Vers implements Comparable<Vers>
         }
 
         final Vers that = (Vers) o;
-        return this.ordinal == that.ordinal && this.name.equals(that.name);
+        return this.name.equals(that.name);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.name, this.ordinal);
+        return Objects.hash(this.name);
     }
 
 
