@@ -22,9 +22,10 @@ public final class Vers implements Comparable<Vers>
     public static final Vers V1_15_2 = new Vers("V1_15_2");
     public static final Vers V1_16_5 = new Vers("V1_16_5");
     public static final Vers V1_17_1 = new Vers("V1_17_1");
+    public static final Vers V1_18   = new Vers("V1_18");
 
 
-    private static final Vers[] values = {V1_8_8, V1_9_4, V1_10_2, V1_11_2, V1_12_2, V1_13_2, V1_14_4, V1_15_2, V1_16_5, V1_17_1};
+    private static final Vers[] values = {V1_8_8, V1_9_4, V1_10_2, V1_11_2, V1_12_2, V1_13_2, V1_14_4, V1_15_2, V1_16_5, V1_17_1, V1_18};
 
 
     @NotNull
