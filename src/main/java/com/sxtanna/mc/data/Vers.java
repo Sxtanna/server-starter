@@ -116,7 +116,11 @@ public final class Vers implements Comparable<Vers>
 
         if ("latest".equals(text.toLowerCase(Locale.ROOT)))
         {
-            vers = Vers.values[Vers.values.length - 1];
+            vers = latest();
+        }
+        else if (text.toLowerCase(Locale.ROOT).startsWith("c"))
+        {
+            vers = new Vers(text.substring(1));
         }
         else
         {
