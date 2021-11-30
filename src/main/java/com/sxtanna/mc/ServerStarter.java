@@ -137,7 +137,15 @@ final class ServerStarter
 
         args.add("-jar");
         args.add(Text.JAR_NAME.replace("{t}", this.type.getName().toLowerCase(Locale.ROOT)));
-        args.add("-nogui");
+
+        if (!conf.conf().hasPath("no-gui"))
+        {
+            args.add("-nogui");
+        }
+        else
+        {
+            args.add(conf.conf().getString("no-gui"));
+        }
 
 
         builder.command(args);
