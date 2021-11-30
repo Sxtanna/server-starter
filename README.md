@@ -38,6 +38,8 @@
  - 1.15.2
  - 1.16.5
  - 1.17.1
+ - 1.18
+ - `cM.M.P` custom version, prefixed with `c` ex. `c1.14.1`
  
  
 ## :scroll: **How To**
@@ -66,4 +68,14 @@ usage: --size 1024:4096
 ```
 alias: v
 usage: --version 1.17.1
+```
+
+
+### **Custom Config Entries**
+
+#### No Gui Argument
+> ex. `no-gui="--noconsole"` <- because for some reason `-nogui` doesn't always work :)
+```
+path: no-gui
+type: String
 ```
