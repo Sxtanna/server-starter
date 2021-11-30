@@ -177,7 +177,7 @@ public final class Vers implements Comparable<Vers>
         }
         else if (text.toLowerCase(Locale.ROOT).startsWith("c"))
         {
-            vers = new Vers(text.substring(1));
+            vers = new Vers(text);
         }
         else
         {
