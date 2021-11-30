@@ -2,6 +2,7 @@ package com.sxtanna.mc;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.sxtanna.mc.conf.ServerStarterConf;
 import com.sxtanna.mc.data.Size;
 import com.sxtanna.mc.data.Text;
 import com.sxtanna.mc.data.Type;
@@ -32,21 +33,24 @@ final class ServerStarter
 
 
     @NotNull
-    private final Type type;
+    private final Type              type;
     @NotNull
-    private final Path path;
+    private final Path              path;
     @NotNull
-    private final Size size;
+    private final Size              size;
     @NotNull
-    private final Vers vers;
+    private final Vers              vers;
+    @NotNull
+    private final ServerStarterConf conf;
 
 
-    ServerStarter(@NotNull final Type type, @NotNull final Path path, @NotNull final Size size, @NotNull final Vers vers)
+    ServerStarter(@NotNull final Type type, @NotNull final Path path, @NotNull final Size size, @NotNull final Vers vers, @NotNull final ServerStarterConf conf)
     {
         this.type = type;
         this.path = path;
         this.size = size;
         this.vers = vers;
+        this.conf = conf;
 
         System.out.printf("Starting a %s, %s %s server in '%s'%n", size, type, vers, path);
     }
