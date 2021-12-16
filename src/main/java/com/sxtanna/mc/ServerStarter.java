@@ -1,6 +1,7 @@
 package com.sxtanna.mc;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.sxtanna.mc.conf.ServerStarterConf;
 import com.sxtanna.mc.data.Size;
@@ -10,11 +11,13 @@ import com.sxtanna.mc.data.Vers;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -135,6 +138,12 @@ final class ServerStarter
             args.addAll(Text.ARGS_SERVERS);
         }
 
+        final var mitigation = applyExploitMitigation(this.path, this.type, this.vers);
+        if (mitigation != null)
+        {
+            args.add(mitigation);
+        }
+
         args.add("-jar");
         args.add(Text.JAR_NAME.replace("{t}", this.type.getName().toLowerCase(Locale.ROOT)));
 
@@ -176,6 +185,54 @@ final class ServerStarter
         {
             return false;
         }
+    }
+
+
+    private static @Nullable String applyExploitMitigation(@NotNull final Path path, @NotNull final Type type, @NotNull final Vers vers)
+    {
+        if (type == Type.BUNGEE) {
+            return null;
+        }
+
+        String      args = null;
+        InputStream save = null;
+
+        try
+        {
+            if (vers.compareTo(Vers.V1_11_2) <= 0)
+            {
+                args = "-Dlog4j.configurationFile=log4j2_17-111.xml";
+                save = ServerStarterMain.class.getResourceAsStream("log4j2_17-111.xml");
+            }
+            else if (vers.compareTo(Vers.V1_16_5) <= 0)
+            {
+                args = "-Dlog4j.configurationFile=log4j2_112-116.xml";
+                save = ServerStarterMain.class.getResourceAsStream("log4j2_112-116.xml");
+            }
+            else if (vers.compareTo(Vers.V1_17_1) <= 0)
+            {
+                args = "-Dlog4j2.formatMsgNoLookups=true";
+            }
+        }
+        catch (final Throwable ignored)
+        {
+            return null;
+        }
+
+        if (save != null)
+        {
+            try
+            {
+                Files.copy(save, path.resolve(args.substring(args.indexOf('='))), StandardCopyOption.REPLACE_EXISTING);
+            }
+            catch (final IOException ex)
+            {
+                System.out.println("Failed to save log4j configuration file");
+                ex.printStackTrace();
+            }
+        }
+
+        return args;
     }
 
 }
