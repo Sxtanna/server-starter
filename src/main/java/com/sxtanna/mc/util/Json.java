@@ -3,6 +3,7 @@ package com.sxtanna.mc.util;
 import org.jetbrains.annotations.NotNull;
 
 import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONElement;
 import kong.unirest.json.JSONObject;
 
 import java.util.Optional;
@@ -15,18 +16,62 @@ public enum Json
 
     public static Optional<JSONObject> getHash(@NotNull final JSONObject root, @NotNull final String path)
     {
-        var some = root;
+        JSONElement some = root;
 
         try
         {
             for (final String it : path.split(":"))
             {
-                if (!some.has(it))
+                if (some instanceof JSONObject)
+                {
+                    final var obj = ((JSONObject) some);
+                    if (!obj.has(it))
+                    {
+                        return Optional.empty();
+                    }
+
+                    JSONElement next = obj.optJSONObject(it);
+                    if (next == null)
+                    {
+                        next = obj.optJSONArray(it);
+                    }
+
+                    some = next;
+                }
+                else if (some instanceof JSONArray)
+                {
+                    final var arr = ((JSONArray) some);
+
+                    int idx = -1;
+
+                    try
+                    {
+                        idx = Integer.parseInt(it);
+                    }
+                    catch (final NumberFormatException ex)
+                    {
+                    }
+
+                    if (idx == -1 || idx >= arr.length())
+                    {
+                        return Optional.empty();
+                    }
+
+
+                    JSONElement next = arr.optJSONObject(idx);
+                    if (next == null)
+                    {
+                        next = arr.optJSONArray(idx);
+                    }
+
+                    some = next;
+                }
+                else
                 {
                     return Optional.empty();
                 }
 
-                some = some.getJSONObject(it);
+
             }
         }
         catch (final Throwable ex)
@@ -35,7 +80,7 @@ public enum Json
             return Optional.empty();
         }
 
-        return Optional.of(some);
+        return Optional.ofNullable(!(some instanceof JSONObject) ? null : ((JSONObject) some));
     }
 
 

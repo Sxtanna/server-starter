@@ -89,11 +89,52 @@ public class Type
         }
     };
 
+    public static final Type PUFFER = new Type("pufferfish", "stop", "https://ci.pufferfish.host/job/Pufferfish-1.%s/lastSuccessfulBuild/api/json", "https://ci.pufferfish.host/job/Pufferfish-1.%s/lastSuccessfulBuild/artifact/%s")
+    {
+        @Override
+        public Optional<String> getLatestVersion(@NotNull final Vers vers)
+        {
+            return Rest.json(String.format(getBase(), vers.minorVersionNumber()))
+                       .flatMap(it -> Json.getTextAtPath(it, "artifacts:0:relativePath"));
+        }
+
+        @Override
+        public Optional<String> getVersionJarURL(@NotNull final Vers vers, @Nullable final String version)
+        {
+            return Optional.ofNullable(version).map(it -> String.format(getLink(), vers.minorVersionNumber(), it));
+        }
+    };
+
+    public static final Type PUFFER_PURPUR = new Type("pufferfish-purpur", "stop", "https://ci.pufferfish.host/job/Pufferfish-Purpur-1.%s/lastSuccessfulBuild/api/json", "https://ci.pufferfish.host/job/Pufferfish-Purpur-1.%s/lastSuccessfulBuild/artifact/%s")
+    {
+        @Override
+        public Optional<String> getLatestVersion(@NotNull final Vers vers)
+        {
+            return Rest.json(String.format(getBase(), vers.minorVersionNumber()))
+                       .flatMap(it -> Json.getTextAtPath(it, "artifacts:0:relativePath"));
+        }
+
+        @Override
+        public Optional<String> getVersionJarURL(@NotNull final Vers vers, @Nullable final String version)
+        {
+            return Optional.ofNullable(version).map(it -> String.format(getLink(), vers.minorVersionNumber(), it));
+        }
+    };
+
+    public static void main(String[] args)
+    {
+        final var latestVersion = PUFFER_PURPUR.getLatestVersion(Vers.V1_17_1);
+        System.out.println(latestVersion);
+
+        final var versionJarURL = PUFFER_PURPUR.getVersionJarURL(Vers.V1_17_1, latestVersion.orElseThrow());
+        System.out.println(versionJarURL);
+    }
+
 
     @Contract(value = " -> new", pure = true)
     public static @NotNull Type[] values()
     {
-        return new Type[]{BUNGEE, SPIGOT, PURPUR};
+        return new Type[]{BUNGEE, SPIGOT, PURPUR, PUFFER, PUFFER_PURPUR};
     }
 
 
@@ -111,6 +152,12 @@ public class Type
                 break;
             case "purpur":
                 type = Type.PURPUR;
+                break;
+            case "puffer":
+                type = Type.PUFFER;
+                break;
+            case "puffer-purpur":
+                type = Type.PUFFER_PURPUR;
                 break;
             default:
                 try
