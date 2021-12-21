@@ -122,10 +122,42 @@ public class Type
     };
 
 
+    // will always require a supplied custom version. ex: -v c3.0.0
+    public static final Type VELOCITY = new Type("velocity", "end", "https://papermc.io/api/v2/projects", "https://papermc.io/api/v2/projects/%s/versions/%s/builds/%s/downloads/%s")
+    {
+        @Override
+        public boolean acceptsNoGuiArgument()
+        {
+            return false;
+        }
+
+        @Override
+        public boolean mightRequireLog4JFix()
+        {
+            return false;
+        }
+
+
+        @Override
+        public Optional<String> getLatestVersion(@NotNull final Vers vers)
+        {
+            return Rest.json(getBase(), "%s/version_group/%s", getName(), vers.mcVersion())
+                       .flatMap(it -> Json.getListAtPath(it, "versions"))
+                       .flatMap(it -> Json.getLastInList(it, JSONArray::getString));
+        }
+
+        @Override
+        public Optional<String> getVersionJarURL(@NotNull final Vers vers, @Nullable final String version)
+        {
+            return getPaperAPIGenericLatestBuildVersionJarURL(vers, vers.mcVersion(), getName(), getBase(), getLink());
+        }
+    };
+
+
     @Contract(value = " -> new", pure = true)
     public static @NotNull Type[] values()
     {
-        return new Type[]{BUNGEE, SPIGOT, PURPUR, PUFFER, PUFFER_PURPUR};
+        return new Type[]{BUNGEE, SPIGOT, PURPUR, PUFFER, PUFFER_PURPUR, VELOCITY};
     }
 
 
@@ -149,6 +181,9 @@ public class Type
                 break;
             case "puffer-purpur":
                 type = Type.PUFFER_PURPUR;
+                break;
+            case "velocity":
+                type = Type.VELOCITY;
                 break;
             default:
                 try
