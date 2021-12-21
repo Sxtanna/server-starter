@@ -9,9 +9,13 @@ import com.sxtanna.mc.data.Text;
 import com.sxtanna.mc.data.Type;
 import com.sxtanna.mc.data.Vers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -26,9 +30,12 @@ import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 final class ServerStarter
 {
+
+    private static final String GENERIC_STOP_COMMAND = "server-starter-generic-stop";
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
                                                                         .withLocale(Locale.getDefault())
@@ -165,14 +172,20 @@ final class ServerStarter
         builder.command(args);
         builder.directory(path.toFile());
 
-        builder.inheritIO();
+        builder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+               .redirectError(ProcessBuilder.Redirect.INHERIT);
 
         final var process = builder.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(process::destroyForcibly));
 
+        final var redirect = awaitGenericStop(type, process);
+
         // await process end
         final var code = process.waitFor();
+
+        redirect.cancel(true);
+
         System.out.println("Server exited with code " + code + "...");
     }
 
@@ -190,6 +203,82 @@ final class ServerStarter
         {
             return false;
         }
+    }
+
+    private static @NotNull CompletableFuture<Void> awaitGenericStop(@NotNull final Type type, @NotNull final Process process)
+    {
+        final var reader = new BufferedReader(new InputStreamReader(System.in));
+        final var writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+
+        final var future = new CompletableFuture<Void>();
+        final var thread = new Thread(() ->
+                                      {
+                                          // This makes perfect sense, and I will die on this hill.
+
+                                          // trw over reader and writer
+                                          try (reader; writer)
+                                          {
+                                              // while the future hasn't been completed
+                                              while (!future.isDone())
+                                              {
+                                                  final String input;
+
+                                                  // wait until the reader is ready, or the future has been completed
+                                                  while (!reader.ready() && !future.isDone())
+                                                  {
+                                                      Thread.onSpinWait(); // this is a workaround to prevent the blocking of this thread by #readLine
+                                                  }
+
+
+                                                  // if the future is completed, do nothing
+                                                  if (future.isDone())
+                                                  {
+                                                      break;
+                                                  }
+
+                                                  // read input
+                                                  input = reader.readLine();
+
+
+                                                  final String pass;
+
+                                                  if (!GENERIC_STOP_COMMAND.equals(input))
+                                                  {
+                                                      pass = input;
+                                                  }
+                                                  else
+                                                  {
+                                                      if (!type.canGracefulClose())
+                                                      {
+                                                          process.destroy();
+                                                          break;
+                                                      }
+                                                      else
+                                                      {
+                                                          pass = type.getStop();
+                                                      }
+                                                  }
+
+                                                  if (pass == null)
+                                                  {
+                                                      continue;
+                                                  }
+
+                                                  // write input to the process
+                                                  writer.write(pass);
+                                                  writer.newLine();
+                                                  writer.flush();
+                                              }
+                                          }
+                                          catch (final IOException ignored)
+                                          {
+                                          }
+                                      }, "generic-stop");
+
+        thread.start();
+        future.whenComplete(($0, $1) -> thread.interrupt());
+
+        return future;
     }
 
 
