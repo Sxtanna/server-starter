@@ -170,6 +170,11 @@ public final class ServerStarterMain
 
     private static void exec(@NotNull final Type type, @NotNull final Path path, @NotNull final Size size, @NotNull final Vers vers, @NotNull final ServerStarterConf config) throws IOException, InterruptedException
     {
+        System.out.println("  __            __          \n" +
+                           " (  _ _   _ _  ( _/_ __/_ _ \n" +
+                           "__)(-/ \\/(-/  __)/(// /(-/ \n" +
+                           "                            \n");
+
         final var starter = new ServerStarter(type, path, size, vers, config);
         starter.saveServerJar();
         starter.execServerJar();

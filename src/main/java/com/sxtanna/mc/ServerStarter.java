@@ -142,6 +142,11 @@ final class ServerStarter
         if (mitigation != null)
         {
             args.add(mitigation);
+
+            System.out.println(" ___                                 _             \n" +
+                               "(_      /  '_/  /|/| '_/'_ __/'     /_|     /'_ _/ \n" +
+                               "/__)(/)(()/ /  /   |/ //(/(///()/) (  |/)/)(/(-(/  \n" +
+                               "    /                  _/             / /          \n");
         }
 
         args.add("-jar");
