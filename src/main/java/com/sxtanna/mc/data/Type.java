@@ -17,9 +17,9 @@ import java.util.Optional;
 public class Type
 {
 
-    private static Optional<String> getPaperAPIGenericLatestBuildVersionJarURL(@NotNull final Vers vers, @NotNull final String name, @NotNull final String base, @NotNull final String link)
+    private static Optional<String> getPaperAPIGenericLatestBuildVersionJarURL(@NotNull final Vers vers, @NotNull final String group, @NotNull final String name, @NotNull final String base, @NotNull final String link)
     {
-        return Rest.json(base, "%s/version_group/%s/builds", name, vers.mcVersionGroup())
+        return Rest.json(base, "%s/version_group/%s/builds", name, group)
                    .flatMap(it -> Json.getListAtPath(it, "builds"))
                    .flatMap(it -> Json.getLastInList(it, JSONArray::getJSONObject))
                    .map(it -> {
@@ -52,7 +52,7 @@ public class Type
         @Override
         public Optional<String> getVersionJarURL(@NotNull final Vers vers, final @Nullable String version)
         {
-            return getPaperAPIGenericLatestBuildVersionJarURL(vers, getName(), getBase(), getLink());
+            return getPaperAPIGenericLatestBuildVersionJarURL(vers, vers.mcVersionGroup(), getName(), getBase(), getLink());
         }
     };
 
@@ -69,7 +69,7 @@ public class Type
         @Override
         public Optional<String> getVersionJarURL(@NotNull final Vers vers, final @Nullable String version)
         {
-            return getPaperAPIGenericLatestBuildVersionJarURL(vers, getName(), getBase(), getLink());
+            return getPaperAPIGenericLatestBuildVersionJarURL(vers, vers.mcVersionGroup(), getName(), getBase(), getLink());
         }
     };
 
