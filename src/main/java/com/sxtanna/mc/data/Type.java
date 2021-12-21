@@ -237,6 +237,17 @@ public class Type
     }
 
 
+    public boolean acceptsNoGuiArgument()
+    {
+        return true;
+    }
+
+    public boolean mightRequireLog4JFix()
+    {
+        return true;
+    }
+
+
     public Optional<String> getLatestVersion(@NotNull final Vers vers)
     {
         return Optional.empty();
