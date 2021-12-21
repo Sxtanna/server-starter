@@ -14,6 +14,7 @@
  - Purpur
  - Puffer
  - Puffer-Purpur
+ - Velocity
  - ~Custom Jar URL~ :no_entry:
 
 ### :file_folder: **Path**
@@ -42,6 +43,8 @@
  - 1.17.1
  - 1.18.1
  - `cM.M.P` custom version, prefixed with `c` ex. `c1.14.1`
+> Velocity always requires a supplied custom version
+ - `-v c3.0.0`
  
  
 ## :scroll: **How To**

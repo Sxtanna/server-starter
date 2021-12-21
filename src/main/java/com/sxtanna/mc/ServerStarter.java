@@ -145,27 +145,32 @@ final class ServerStarter
             args.addAll(Text.ARGS_SERVERS);
         }
 
-        final var mitigation = applyExploitMitigation(this.path, this.type, this.vers);
-        if (mitigation != null)
-        {
-            args.add(mitigation);
+        if (type.mightRequireLog4JFix()) {
+            final var mitigation = applyExploitMitigation(this.path, this.vers);
+            if (mitigation != null)
+            {
+                args.add(mitigation);
 
-            System.out.println(" ___                                 _             \n" +
-                               "(_      /  '_/  /|/| '_/'_ __/'     /_|     /'_ _/ \n" +
-                               "/__)(/)(()/ /  /   |/ //(/(///()/) (  |/)/)(/(-(/  \n" +
-                               "    /                  _/             / /          \n");
+                System.out.println(" ___                                 _             \n" +
+                                   "(_      /  '_/  /|/| '_/'_ __/'     /_|     /'_ _/ \n" +
+                                   "/__)(/)(()/ /  /   |/ //(/(///()/) (  |/)/)(/(-(/  \n" +
+                                   "    /                  _/             / /          \n");
+            }
         }
 
         args.add("-jar");
         args.add(Text.JAR_NAME.replace("{t}", this.type.getName().toLowerCase(Locale.ROOT)));
 
-        if (!conf.conf().hasPath("no-gui"))
+        if (type.acceptsNoGuiArgument())
         {
-            args.add("-nogui");
-        }
-        else
-        {
-            args.add(conf.conf().getString("no-gui"));
+            if (!conf.conf().hasPath("no-gui"))
+            {
+                args.add("-nogui");
+            }
+            else
+            {
+                args.add(conf.conf().getString("no-gui"));
+            }
         }
 
 
@@ -282,7 +287,7 @@ final class ServerStarter
     }
 
 
-    private static @Nullable String applyExploitMitigation(@NotNull final Path path, @NotNull final Type type, @NotNull final Vers vers)
+    private static @Nullable String applyExploitMitigation(@NotNull final Path path, @NotNull final Vers vers)
     {
         String      args = null;
         InputStream save = null;
