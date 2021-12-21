@@ -121,15 +121,6 @@ public class Type
         }
     };
 
-    public static void main(String[] args)
-    {
-        final var latestVersion = PUFFER_PURPUR.getLatestVersion(Vers.V1_17_1);
-        System.out.println(latestVersion);
-
-        final var versionJarURL = PUFFER_PURPUR.getVersionJarURL(Vers.V1_17_1, latestVersion.orElseThrow());
-        System.out.println(versionJarURL);
-    }
-
 
     @Contract(value = " -> new", pure = true)
     public static @NotNull Type[] values()
