@@ -12,6 +12,8 @@
  - Spigot
  - Bungee
  - Purpur
+ - Puffer
+ - Puffer-Purpur
  - ~Custom Jar URL~ :no_entry:
 
 ### :file_folder: **Path**
@@ -38,7 +40,7 @@
  - 1.15.2
  - 1.16.5
  - 1.17.1
- - 1.18
+ - 1.18.1
  - `cM.M.P` custom version, prefixed with `c` ex. `c1.14.1`
  
  
