@@ -284,10 +284,6 @@ final class ServerStarter
 
     private static @Nullable String applyExploitMitigation(@NotNull final Path path, @NotNull final Type type, @NotNull final Vers vers)
     {
-        if (type == Type.BUNGEE) {
-            return null;
-        }
-
         String      args = null;
         InputStream save = null;
 
