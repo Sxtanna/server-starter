@@ -142,7 +142,14 @@ final class ServerStarter
         }
         else
         {
-            args.addAll(Text.ARGS_SERVERS);
+            if (conf.conf().hasPath("graalvm") && conf.conf().getBoolean("graalvm"))
+            {
+                args.addAll(Text.ARGS_GRAALVM);
+            }
+            else
+            {
+                args.addAll(Text.ARGS_SERVERS);
+            }
         }
 
         if (type.mightRequireLog4JFix()) {
