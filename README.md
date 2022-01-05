@@ -84,3 +84,10 @@ usage: --version 1.17.1
 path: no-gui
 type: String
 ```
+
+#### GraalVM Enterprise Edition
+> ex. `graalvm=true` will use graalvm optimization flags instead of the default aikar flags
+```
+path: graalvm
+type: Boolean
+```
