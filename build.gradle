@@ -8,7 +8,7 @@ plugins {
 
 
 group "com.sxtanna.mc"
-version "3.6"
+version "3.7"
 
 
 mainClassName = "com.sxtanna.mc.ServerStarterMain"
